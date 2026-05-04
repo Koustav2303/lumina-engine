@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import { gsap } from 'gsap';
+import { Globe, Code, Save, Play } from 'lucide-react';
 
 // Language Configuration
 const LANGUAGES = {
-  web: { id: 'web', name: 'Web 3D / HTML', monaco: 'javascript', type: 'browser', icon: '🌐' },
-  python: { id: 'python', name: 'Python 3', monaco: 'python', type: 'local', icon: '🐍' },
-  javascript: { id: 'javascript', name: 'Node.js', monaco: 'javascript', type: 'local', icon: '🟢' },
-  cpp: { id: 'cpp', name: 'C++', monaco: 'cpp', type: 'local', icon: '⚙️' },
-  go: { id: 'go', name: 'Go', monaco: 'go', type: 'local', icon: '🐹' }
+  web: { id: 'web', name: 'Web 3D / HTML', monaco: 'javascript', type: 'browser', iconComponent: Globe },
+  python: { id: 'python', name: 'Python 3', monaco: 'python', type: 'local', iconComponent: Code },
+  javascript: { id: 'javascript', name: 'Node.js', monaco: 'javascript', type: 'local', iconComponent: Code },
+  cpp: { id: 'cpp', name: 'C++', monaco: 'cpp', type: 'local', iconComponent: Code },
+  go: { id: 'go', name: 'Go', monaco: 'go', type: 'local', iconComponent: Code }
 };
 
 const defaultCodes = {
@@ -214,10 +215,20 @@ function App() {
 
   return (
     <div 
-      className="min-h-screen p-4 md:p-8 font-sans text-slate-800 overflow-hidden relative bg-cover bg-center bg-no-repeat bg-fixed"
-      style={{ backgroundImage: `url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2560&auto=format&fit=crop')` }}
+      className="min-h-screen p-4 md:p-8 font-sans text-slate-800 overflow-hidden relative bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900"
     >
-      <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px] z-0 pointer-events-none"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-pink-500/10 backdrop-blur-[1px] z-0 pointer-events-none"></div>
+      {/* Animated particles background */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-cyan-400 rounded-full animate-pulse opacity-60 shadow-lg shadow-cyan-400/50"></div>
+        <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-purple-400 rounded-full animate-bounce opacity-40 shadow-lg shadow-purple-400/50"></div>
+        <div className="absolute bottom-1/4 left-1/3 w-3 h-3 bg-pink-400 rounded-full animate-ping opacity-50 shadow-lg shadow-pink-400/50"></div>
+        <div className="absolute top-1/2 right-1/4 w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse opacity-70 shadow-lg shadow-blue-400/50"></div>
+        <div className="absolute bottom-1/3 right-1/2 w-2.5 h-2.5 bg-green-400 rounded-full animate-bounce opacity-30 shadow-lg shadow-green-400/50"></div>
+        <div className="absolute top-1/6 left-1/2 w-1 h-1 bg-yellow-400 rounded-full animate-spin opacity-50 shadow-lg shadow-yellow-400/50"></div>
+        <div className="absolute bottom-1/6 right-1/6 w-2 h-2 bg-orange-400 rounded-full animate-pulse opacity-40 shadow-lg shadow-orange-400/50"></div>
+        <div className="absolute top-2/3 left-1/6 w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce opacity-60 shadow-lg shadow-indigo-400/50"></div>
+      </div>
 
       {shareUrl && (
         <div className="share-toast absolute top-6 left-1/2 transform -translate-x-1/2 z-50 bg-white/80 backdrop-blur-xl border border-blue-200 shadow-2xl rounded-full px-6 py-3 flex items-center gap-4">
@@ -227,21 +238,22 @@ function App() {
         </div>
       )}
 
-      <header ref={headerRef} className="relative z-10 mb-6 flex flex-col md:flex-row justify-between items-center bg-white/40 backdrop-blur-lg border border-white/60 shadow-lg rounded-2xl p-4 opacity-0 gap-4">
-        <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-indigo-800 tracking-tight">
+      <header ref={headerRef} className="relative z-10 mb-6 flex flex-col md:flex-row justify-between items-center bg-white/40 backdrop-blur-lg border border-white/60 shadow-lg rounded-2xl p-4 opacity-0 gap-4 hover:shadow-2xl hover:shadow-purple-500/20 transition-shadow duration-500">
+        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 tracking-tight">
           Code Playground
         </h1>
         
         <div className="flex gap-3">
-          <button onClick={handleSave} disabled={isSaving} className="px-4 py-2.5 bg-blue-50/80 hover:bg-blue-100 border border-blue-200 text-blue-800 font-semibold rounded-xl shadow-sm transition-all duration-300 disabled:opacity-50">
-            {isSaving ? 'Saving...' : '💾 Save'}
+          <button onClick={handleSave} disabled={isSaving} className="px-4 py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 border border-blue-300/50 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 transition-all duration-300 disabled:opacity-50 hover:shadow-xl hover:shadow-purple-500/40 transform hover:scale-105 flex items-center gap-2">
+            <Save size={16} />
+            {isSaving ? 'Saving...' : 'Save'}
           </button>
           <button
             onClick={handleRun}
             disabled={isRunning}
-            className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-6 py-2.5 bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white font-medium rounded-xl shadow-lg shadow-green-500/30 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:shadow-xl hover:shadow-teal-500/40 hover:scale-105"
           >
-            {isRunning ? <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></div> : '▶'}
+            {isRunning ? <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></div> : <Play size={16} />}
             {isRunning ? 'Running...' : 'Run Code'}
           </button>
         </div>
@@ -249,21 +261,21 @@ function App() {
 
       <div className="relative z-10 flex flex-col lg:flex-row gap-6 h-[calc(100vh-160px)]">
         
-        <div ref={editorRef} className="flex-1 flex flex-col bg-white/30 backdrop-blur-xl border border-white/60 shadow-2xl rounded-3xl overflow-hidden opacity-0">
+        <div ref={editorRef} className="flex-1 flex flex-col bg-white/30 backdrop-blur-xl border border-white/60 shadow-2xl rounded-3xl overflow-hidden opacity-0 hover:shadow-2xl hover:shadow-cyan-500/20 transition-shadow duration-500 hover:border-cyan-400/50">
           <div className="bg-white/40 px-5 py-3 border-b border-white/50 flex items-center justify-between relative">
             <div className="flex items-center">
-              <div className="w-3 h-3 rounded-full bg-red-400 mr-2 shadow-sm"></div>
-              <div className="w-3 h-3 rounded-full bg-amber-400 mr-2 shadow-sm"></div>
-              <div className="w-3 h-3 rounded-full bg-green-400 mr-4 shadow-sm"></div>
+              <div className="w-3 h-3 rounded-full bg-red-400 mr-2 shadow-sm animate-pulse"></div>
+              <div className="w-3 h-3 rounded-full bg-amber-400 mr-2 shadow-sm animate-pulse"></div>
+              <div className="w-3 h-3 rounded-full bg-green-400 mr-4 shadow-sm animate-pulse"></div>
               <span className="font-semibold text-sm text-slate-800 hidden sm:block">main.{activeLang.id === 'web' ? 'js' : activeLang.monaco}</span>
             </div>
             
             <div className="relative" ref={dropdownRef}>
               <button 
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-2 bg-white/60 hover:bg-white/80 border border-white/50 text-slate-800 font-semibold text-sm rounded-xl px-4 py-2 shadow-sm transition-all duration-200"
+                className="flex items-center gap-2 bg-white/60 hover:bg-white/80 border border-white/50 text-slate-800 font-semibold text-sm rounded-xl px-4 py-2 shadow-sm transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/30"
               >
-                <span>{activeLang.icon}</span>
+                <activeLang.iconComponent size={18} />
                 <span>{activeLang.name}</span>
                 <svg className={`w-4 h-4 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
               </button>
@@ -276,9 +288,9 @@ function App() {
                       <button
                         key={key}
                         onClick={() => selectLanguage(key)}
-                        className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors hover:bg-blue-50 flex items-center gap-3 ${activeLang.id === lang.id ? 'text-blue-600 bg-blue-50/50' : 'text-slate-700'}`}
+                        className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors hover:bg-gradient-to-r hover:from-cyan-50 hover:to-purple-50 flex items-center gap-3 ${activeLang.id === lang.id ? 'text-blue-600 bg-gradient-to-r from-blue-50 to-purple-50' : 'text-slate-700'}`}
                       >
-                        <span className="text-lg">{lang.icon}</span>
+                        <lang.iconComponent size={18} />
                         {lang.name}
                       </button>
                     );
@@ -295,12 +307,36 @@ function App() {
               theme="light"
               value={codes[activeLang.id]}
               onChange={handleEditorChange}
-              options={{ minimap: { enabled: false }, fontSize: 15, fontFamily: '"Fira Code", monospace', scrollBeyondLastLine: false, padding: { top: 16 }, background: 'transparent' }}
+              options={{
+                minimap: { enabled: false },
+                fontSize: 15,
+                fontFamily: '"Fira Code", monospace',
+                scrollBeyondLastLine: false,
+                padding: { top: 16 },
+                background: 'transparent',
+                quickSuggestions: {
+                  other: true,
+                  comments: false,
+                  strings: true
+                },
+                suggestOnTriggerCharacters: true,
+                acceptSuggestionOnEnter: 'on',
+                wordBasedSuggestions: 'currentDocument',
+                parameterHints: {
+                  enabled: true
+                },
+                hover: {
+                  enabled: true
+                },
+                contextmenu: true,
+                mouseWheelZoom: true,
+                automaticLayout: true
+              }}
             />
           </div>
         </div>
 
-        <div ref={previewRef} className="flex-1 flex flex-col bg-white/30 backdrop-blur-xl border border-white/60 shadow-2xl rounded-3xl overflow-hidden opacity-0">
+        <div ref={previewRef} className="flex-1 flex flex-col bg-white/30 backdrop-blur-xl border border-white/60 shadow-2xl rounded-3xl overflow-hidden opacity-0 hover:shadow-2xl hover:shadow-pink-500/20 transition-shadow duration-500 hover:border-pink-400/50">
           <div className="bg-white/40 px-5 py-3 border-b border-white/50">
             <span className="font-semibold text-sm text-slate-800">
               {activeLang.type === 'browser' ? 'Live Visual Output' : 'Terminal Engine'}
@@ -319,7 +355,9 @@ function App() {
                 )
             ) : (
                 <div className="text-center p-6">
-                    <div className="text-6xl mb-4 opacity-20">{activeLang.icon}</div>
+                    <div className="text-6xl mb-4 opacity-20 flex justify-center">
+                      <activeLang.iconComponent size={48} />
+                    </div>
                     <p className="text-slate-400 font-medium text-lg border border-slate-800 rounded-xl px-6 py-3 bg-slate-900/50">
                         Visualizer disabled for {activeLang.name}.<br/>Check terminal below for output.
                     </p>
